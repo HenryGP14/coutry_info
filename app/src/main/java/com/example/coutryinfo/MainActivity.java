@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,6 +18,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements Asynchtask {
@@ -48,20 +50,35 @@ public class MainActivity extends AppCompatActivity implements Asynchtask {
 
     @Override
     public void processFinish(String result) throws JSONException {
+        EditText texto = findViewById(R.id.ed_nombre);
         TextView respuesta = findViewById(R.id.txt_resultados);
         ArrayList<String> list_paises = new ArrayList<>();
         ArrayList<String> list_paises_codigo = new ArrayList<>();
 
         try {
-            JSONObject objet_result_web = new JSONObject(result);
-            System.out.println(objet_result_web.getJSONArray("Results"));
+            JSONObject object_result_web = new JSONObject(result);
+            JSONObject object_pais = object_result_web.getJSONObject("Results");
+            Iterator x = object_pais.keys();
+            JSONArray jsonArray = new JSONArray();
 
-            JSONArray json_array = new JSONArray(objet_result_web.getJSONArray("Results"));
-
-            for (int i = 0; i < json_array.length(); i++)
-            {
-                JSONObject pais = json_array.getJSONObject(i);
+            while (x.hasNext()){
+                String key = (String) x.next();
+                jsonArray.put(object_pais.get(key));
             }
+
+            System.out.println(jsonArray.getJSONObject(1).getString("Name").toUpperCase());
+            for(int i = 0; i < jsonArray.length(); i++){
+                JSONObject pais = jsonArray.getJSONObject(i);
+                System.out.println(pais.getString("Name") + ";");
+                if(pais.getString("Name").equals(texto.getText().toString())){
+                    break;
+                }
+//                if(pais.getString("Name").toUpperCase() == "Ecuador".toUpperCase()){
+//                    System.out.println(pais.getString("Name"));
+//                    break;
+//                }
+            }
+
         }catch (Exception e){
             Toast.makeText(this, "Los datos de la web service no se han cargado", Toast.LENGTH_LONG).show();
         }
