@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "385042034518",
+    "project_id": "coutry-info",
+    "storage_bucket": "coutry-info.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:385042034518:android:8d9f90acdc7697c95a70f7",
+        "android_client_info": {
+          "package_name": "com.example.coutryinfo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "385042034518-lkimq9voebkt3cgu3b0grunpble48fve.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC-eRQPpQHH4NAVeVaUblQx9kkqnnvm_po"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "385042034518-lkimq9voebkt3cgu3b0grunpble48fve.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
