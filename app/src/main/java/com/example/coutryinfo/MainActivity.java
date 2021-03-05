@@ -5,7 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,33 +29,33 @@ public class MainActivity extends AppCompatActivity implements Asynchtask {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Map<String, String> datos_webservice = new HashMap<>();
+        String URL = "http://www.geognos.com/api/en/countries/info/all.json";
+        WebService web_service = new WebService(URL, datos_webservice, MainActivity.this, MainActivity.this);
+        web_service.execute("GET");
+
     }
 
     String codigo_pais;
 
     public void bnt_enviar_pais(View view) {
+        Spinner sp_pais = findViewById(R.id.sp_pais);
+//        System.out.println(sp_pais.getSelectedItemId());
         Intent intent = new Intent(MainActivity.this, info.class);
         Bundle bundle = new Bundle();
-        bundle.putString("codigo_pais", codigo_pais);
+        bundle.putString("codigo_pais", list_paises_codigo.get(sp_pais.getSelectedItemPosition()));
 
         intent.putExtras(bundle);
 
         startActivity(intent);
     }
 
-    public void btn_buscar_pais(View view){
-        Map<String, String> datos_webservice = new HashMap<>();
-        String URL = "http://www.geognos.com/api/en/countries/info/all.json";
-        WebService web_service = new WebService(URL, datos_webservice, MainActivity.this, MainActivity.this);
-        web_service.execute("GET");
-    }
+    ArrayList<String> list_paises = new ArrayList<>();
+    ArrayList<String> list_paises_codigo = new ArrayList<>();
 
     @Override
     public void processFinish(String result) throws JSONException {
-        EditText texto = findViewById(R.id.ed_nombre);
-        TextView respuesta = findViewById(R.id.txt_resultados);
-        ArrayList<String> list_paises = new ArrayList<>();
-        ArrayList<String> list_paises_codigo = new ArrayList<>();
 
         try {
             JSONObject object_result_web = new JSONObject(result);
@@ -66,18 +68,20 @@ public class MainActivity extends AppCompatActivity implements Asynchtask {
                 jsonArray.put(object_pais.get(key));
             }
 
-            System.out.println(jsonArray.getJSONObject(1).getString("Name").toUpperCase());
+            list_paises.add("Seleccione un país");
+            list_paises_codigo.add("");
             for(int i = 0; i < jsonArray.length(); i++){
                 JSONObject pais = jsonArray.getJSONObject(i);
-                System.out.println(pais.getString("Name") + ";");
-                if(pais.getString("Name").equals(texto.getText().toString())){
-                    break;
-                }
-//                if(pais.getString("Name").toUpperCase() == "Ecuador".toUpperCase()){
-//                    System.out.println(pais.getString("Name"));
-//                    break;
-//                }
+                list_paises.add(pais.getString("Name"));
+                JSONObject codigo_pais = pais.getJSONObject("CountryCodes");
+                list_paises_codigo.add(codigo_pais.getString("iso2"));
             }
+
+            Spinner sp = findViewById(R.id.sp_pais);
+            ArrayAdapter<CharSequence> adapter;
+            adapter = new ArrayAdapter(this,
+                    android.R.layout.simple_spinner_item, list_paises);
+            sp.setAdapter(adapter);
 
         }catch (Exception e){
             Toast.makeText(this, "Los datos de la web service no se han cargado", Toast.LENGTH_LONG).show();
